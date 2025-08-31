@@ -46,17 +46,59 @@
 
 #include "legacymodules.h"
 
+#if GMX_PYSCF
+#define PY_SSIZE_T_CLEAN
+#include <Python.h>
+#define NPY_NO_DEPRECATED_API NPY_1_7_API_VERSION
+#define PY_ARRAY_UNIQUE_SYMBOL GROMACS_ARRAY_API
+#define NUMPY_IMPORT_ARRAY
+#include "numpy/arrayobject.h"
+#endif
+
 int main(int argc, char* argv[])
 {
     gmx::CommandLineProgramContext& context = gmx::initForCommandLine(&argc, &argv);
     try
     {
+#if GMX_PYSCF
+        wchar_t* program = Py_DecodeLocale(argv[0], NULL);
+        if (program == NULL)
+        {
+            fprintf(stderr, "Fatal error: cannot decode argv[0]\n");
+            exit(1);
+        }
+
+        Py_SetProgramName(program);
+        Py_Initialize();
+        fprintf(stderr, "Initialized Python Interpreter.\n");
+        if (_import_array() < 0) {
+            PyErr_Print();
+            Py_FinalizeEx();
+            fprintf(stderr, "Failed to import numpy.\n");
+            PyMem_RawFree(program);
+            exit(1);
+        }
+        fprintf(stderr, "Imported NumpyArray.\n");
+        assert(PyArray_API);
+#endif
+
         gmx::CommandLineModuleManager manager("gmx", &context);
         registerTrajectoryAnalysisModules(&manager);
         registerLegacyModules(&manager);
         manager.addHelpTopic(gmx::createSelectionHelpTopic());
         int rc = manager.run(argc, argv);
         gmx::finalizeForCommandLine();
+
+#if GMX_PYSCF
+        PyErr_Print();
+        fprintf(stderr, "Printed Python Errors, Finalizing Py Interpreter.\n");
+        if (Py_FinalizeEx() < 0)
+        {
+            PyMem_RawFree(program);
+            exit(120);
+        }
+        PyMem_RawFree(program);
+#endif
         return rc;
     }
     catch (const std::exception& ex)

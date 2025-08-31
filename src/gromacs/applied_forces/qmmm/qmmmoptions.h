@@ -63,7 +63,11 @@ struct CoordinatesAndBoxPreprocessed;
 struct QMInputFileName;
 
 //! Tag with name of the QMMM with CP2K MDModule
-static const std::string c_qmmmCP2KModuleName = "qmmm-cp2k";
+#if GMX_PYSCF
+static const std::string c_qmmmModuleName = "qmmm-pyscf";
+#else
+static const std::string c_qmmmModuleName = "qmmm-cp2k";
+#endif
 
 /*! \internal
  * \brief Input data storage for QM/MM
@@ -152,7 +156,7 @@ private:
     void processExternalInputFile();
 
     /*! \brief Following Tags denotes names of parameters from .mdp file
-     * \note Changing this strings will break .tpr backwards compatibility
+     * \note Changing this strings will break .tpr backwards compability
      */
     //! \{
     const std::string c_activeTag_              = "active";
@@ -160,7 +164,8 @@ private:
     const std::string c_qmChargeTag_            = "qmcharge";
     const std::string c_qmMultTag_              = "qmmultiplicity";
     const std::string c_qmMethodTag_            = "qmmethod";
-    const std::string c_qmUserInputFileNameTag_ = "qmfilenames";
+    const std::string c_qmUserInputFileNameTag_ = "drivername";
+    const std::string c_qmUserInputFilePathTag_ = "driverpath";
     //! \}
 
     /*! \brief This tags for parameters which will be generated during grompp

@@ -31,29 +31,24 @@
 # To help us fund GROMACS development, we humbly ask that you cite
 # the research papers on the package. Check out https://www.gromacs.org.
 
-gmx_add_libgromacs_sources(
-    qmmminputgenerator.cpp
-    qmmmtopologypreprocessor.cpp
-    qmmmoptions.cpp
-    qmmm.cpp
-    )
+if(GMX_PYSCF)
 
-# If we have libcp2k linked then compile qmmmforceprovider.cpp
-# In other case compile stub implementation qmmmforceprovider_stub.cpp
-if (GMX_CP2K)
-gmx_add_libgromacs_sources(
-    qmmmforceprovider.cpp
-    )
-elseif(GMX_PYSCF)
-gmx_add_libgromacs_sources(
-    qmmmforceprovider_pyscf.cpp
-    )
-else()
-gmx_add_libgromacs_sources(
-    qmmmforceprovider_stub.cpp
-    )
-endif()
+    # CMake flags for PySCF linking
+    find_package(Python COMPONENTS Development NumPy)
 
-if (BUILD_TESTING)
-    add_subdirectory(tests)
+    # Check if libpython is found
+    if (Python_Development.Embed_FOUND AND Python_NumPy_FOUND)
+        # libpython found: add libraries and paths to the respecting GROMACS variables
+        message(STATUS "Found libpython in ${Python_LIBRARY_DIRS}")
+        message(STATUS "Found python include dir: ${Python_INCLUDE_DIRS}")
+        message(STATUS "Found numpy include dir: ${Python_NumPy_INCLUDE_DIRS}")
+        include_directories(SYSTEM "${Python_INCLUDE_DIRS}")
+        include_directories(SYSTEM "${Python_NumPy_INCLUDE_DIRS}")
+        link_directories(${Python_LIBRARY_DIRS})
+        list(APPEND GMX_COMMON_LIBRARIES ${Python_LIBRARIES})
+        add_definitions(-DGMX_PYSCF=1)
+    else()
+        message(FATAL_ERROR "To build GROMACS with PySCF Interface, libpython and numpy should be installed")
+    endif()
+
 endif()

@@ -92,7 +92,7 @@ public:
     {
         // Prepare MDP inputs
         KeyValueTreeBuilder mdpValueBuilder;
-        mdpValueBuilder.rootObject().addValue(c_qmmmCP2KModuleName + "-active", std::string("true"));
+        mdpValueBuilder.rootObject().addValue(c_qmmmModuleName + "-active", std::string("true"));
         return mdpValueBuilder.build();
     }
 
@@ -100,8 +100,8 @@ public:
     {
         // Prepare MDP inputs
         KeyValueTreeBuilder mdpValueBuilder;
-        mdpValueBuilder.rootObject().addValue(c_qmmmCP2KModuleName + "-active", std::string("true"));
-        mdpValueBuilder.rootObject().addValue(c_qmmmCP2KModuleName + "-qmmethod", std::string("INPUT"));
+        mdpValueBuilder.rootObject().addValue(c_qmmmModuleName + "-active", std::string("true"));
+        mdpValueBuilder.rootObject().addValue(c_qmmmModuleName + "-qmmethod", std::string("INPUT"));
         return mdpValueBuilder.build();
     }
 

@@ -123,11 +123,17 @@ struct QMMMParameters
     /*! \brief String containing name of the CP2K files (*.inp, *.out, *.pdb)
      * default value empty, means will be deduced from *.tpr name during mdrun
      */
-    std::string qmFileNameBase_;
+    /*! \brief String containing name of the pyscfdriver.file (*.py)
+     * default value empty, means will be deduced from *.tpr name during mdrun
+     */
+    std::string qmFileNameBase_ = "pyscfdriver";
     //! String containing whole CP2K input which can be stored inside *.tpr
+    std::string qmFilePath_ = "./";
     std::string qmInput_;
     //! String containing PDB file for CP2K input which can be stored inside *.tpr
     std::string qmPdb_;
+    //! String containing PDB file for CP2K update which can be stored inside *.tpr
+    std::string qmPdbUpdate_;
     //! Matrix that contains vectors defining QM box
     matrix qmBox_;
     //! Translation vector to center QM subsystem inside the QM Box

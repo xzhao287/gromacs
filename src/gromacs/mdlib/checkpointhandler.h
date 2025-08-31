@@ -129,7 +129,8 @@ public:
     }
 
     //! Query decision in decideIfCheckpointingThisStep()
-    bool isCheckpointingStep() const { return checkpointThisStep_; }
+    // bool isCheckpointingStep() const { return checkpointThisStep_; }
+    bool isCheckpointingStep() const { return true; }
 
 private:
     void setSignalImpl(gmx_walltime_accounting* walltime_accounting) const;

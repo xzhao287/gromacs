@@ -388,6 +388,7 @@ std::unique_ptr<IMDModule> QMMMModuleInfo::create()
     return std::make_unique<QMMM>();
 }
 
-const std::string QMMMModuleInfo::name_ = c_qmmmCP2KModuleName;
+// const std::string QMMMModuleInfo::name_ = c_qmmmCP2KModuleName;
+const std::string QMMMModuleInfo::name_ = c_qmmmModuleName;
 
 } // namespace gmx

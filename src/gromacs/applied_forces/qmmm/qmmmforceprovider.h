@@ -42,6 +42,15 @@
 #ifndef GMX_APPLIED_FORCES_QMMMFORCEPROVIDER_H
 #define GMX_APPLIED_FORCES_QMMMFORCEPROVIDER_H
 
+#if GMX_PYSCF
+#define PY_SSIZE_T_CLEAN
+#include <Python.h>
+#define NPY_NO_DEPRECATED_API NPY_1_7_API_VERSION
+#define PY_ARRAY_UNIQUE_SYMBOL GROMACS_ARRAY_API
+#define NO_IMPORT_ARRAY
+#include "numpy/arrayobject.h"
+#endif
+
 #include "gromacs/domdec/localatomset.h"
 #include "gromacs/mdtypes/forceoutput.h"
 #include "gromacs/mdtypes/iforceprovider.h"
@@ -97,6 +106,18 @@ private:
      */
     void initCP2KForceEnvironment(const t_commrec& cr);
 
+#if GMX_PYSCF
+    /*
+     *this recorder should be put after force is calculated
+     */
+    void frameRecorder(const ForceProviderInput& fInput);
+    /*
+     * this recorder generates charge, elemental kind, and indeces for
+     * pyscfdriver, before the first step begins
+     */
+    void initialInfoGenerator(const ForceProviderInput& fInput);
+#endif
+
     const QMMMParameters& parameters_;
     const LocalAtomSet&   qmAtoms_;
     const LocalAtomSet&   mmAtoms_;
@@ -108,6 +129,11 @@ private:
 
     //! Flag wether initCP2KForceEnvironment() has been called already
     bool isCp2kLibraryInitialized_ = false;
+
+#if GMX_PYSCF
+    //! PySCF MD engine module
+    PyObject* pModule_ = nullptr;
+#endif
 
     //! CP2K force environment handle
     force_env_t force_env_ = -1;

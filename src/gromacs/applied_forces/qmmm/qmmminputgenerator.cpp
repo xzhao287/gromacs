@@ -447,11 +447,14 @@ std::string QMMMInputGenerator::generateCP2KPdb() const
         }
 
         // Coordinates
+        // pdb += formatString("%7.3lf %7.3lf %7.3lf  1.00  0.00         ",
+        //                     (x_[i][XX] + qmTrans_[XX]) * 10,
+        //                     (x_[i][YY] + qmTrans_[YY]) * 10,
+        //                     (x_[i][ZZ] + qmTrans_[ZZ]) * 10);
         pdb += formatString("%7.3lf %7.3lf %7.3lf  1.00  0.00         ",
-                            (x_[i][XX] + qmTrans_[XX]) * 10,
-                            (x_[i][YY] + qmTrans_[YY]) * 10,
-                            (x_[i][ZZ] + qmTrans_[ZZ]) * 10);
-
+                            (x_[i][XX]) * 10,
+                            (x_[i][YY]) * 10,
+                            (x_[i][ZZ]) * 10);
         // Atom symbol
         pdb += formatString(" %3s ", periodic_system[parameters_.atomNumbers_[i]].c_str());
 
