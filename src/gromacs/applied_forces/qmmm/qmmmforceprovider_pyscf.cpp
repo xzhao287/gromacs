@@ -239,12 +239,24 @@ void QMMMForceProvider::calculateForces(const ForceProviderInput& fInput, ForceP
     PythonObjectManager pyMMCoords;
     PythonObjectManager pyMMLocalIndex;
     PythonObjectManager pyLinks;
+    // Create a 3x3 Python list for the box
+    PythonObjectManager pyBox(PyList_New(3));
+    for (size_t i = 0; i < 3; i++)
+    {
+        PyObject* pyBoxRow = PyList_New(3);
+        for (size_t j = 0; j < 3; j++)
+        {
+            PyObject* pyBoxElement = PyFloat_FromDouble(box_[i][j] * 10.00);
+            PyList_SetItem(pyBoxRow, j, pyBoxElement);
+        }
+        PyList_SetItem(pyBox.get(), i, pyBoxRow);
+    }
 
     PythonObjectManager pyStepNumber(PyLong_FromLongLong(fInput.step_));
     fprintf(stderr, "c++ output step number %" PRId64 " \n", fInput.step_);
     if (fInput.step_ == 0)
     {
-        initialInfoGenerator(fInput);
+        // initialInfoGenerator(fInput);
     }
     PythonObjectManager calcResult;
 
@@ -339,6 +351,7 @@ void QMMMForceProvider::calculateForces(const ForceProviderInput& fInput, ForceP
                                                       pyMMCharges.get(),
                                                       pyMMCoords.get(),
                                                       pyLinks.get(),
+                                                      pyBox.get(),
                                                       NULL));
     }
     else if (numAtomsMM == 0)
